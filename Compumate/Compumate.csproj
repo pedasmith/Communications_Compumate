@@ -120,10 +120,11 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="CompumateAppointments.cs" />
-    <Compile Include="CompumateDataEntry.cs" />
+    <Compile Include="CompumateAbstractDataEntry.cs" />
     <Compile Include="CompumatePrivateFiles.cs" />
     <Compile Include="CompumateSection.cs" />
     <Compile Include="CompumateTelephoneDirectory.cs" />
+    <Compile Include="CompumateWordProcessor.cs" />
     <Compile Include="DataChunk.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>

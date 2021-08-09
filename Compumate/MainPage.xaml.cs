@@ -115,14 +115,14 @@ namespace Compumate
             sd.StopBits = SerialStopBitCount.One;
             sd.IsRequestToSendEnabled = true;
             sd.IsDataTerminalReadyEnabled = true;
-            sd.ReadTimeout = new TimeSpan(0, 0, 5);
+            sd.ReadTimeout = new TimeSpan(0, 0, 1);
 
             var dr = new DataReader(sd.InputStream);
             dr.InputStreamOptions = InputStreamOptions.Partial;
             bool lastWasCtrl = false;
             while (true)
             {
-                var n = await dr.LoadAsync(100);
+                var n = await dr.LoadAsync(500);
 
                 Log($"GOT DATA length={n}");
                 var left = dr.UnconsumedBufferLength;
@@ -141,8 +141,13 @@ namespace Compumate
                 if (b < 0x20 || b >= 0x7f)
                 {
                     if (!lastWasCtrl) sb.Append(' ');
-                    sb.Append($"x{b:X2} ");
+                    sb.Append($"\\{b:X2} ");
                     lastWasCtrl = true;
+                }
+                else if (b == (byte)'\\')
+                {
+                    sb.Append("\\\\");
+                    lastWasCtrl = false;
                 }
                 else
                 {
@@ -157,6 +162,7 @@ namespace Compumate
         {
             uiOutput.Text = "";
             uiLog.Text = "";
+            CurrData.ClearBytes();
         }
 
         static string FileLocation_Compumate_Data = "Compumate_Data_Location";
@@ -192,9 +198,9 @@ namespace Compumate
             {
                 var buffer = await FileIO.ReadBufferAsync(file);
                 var bytes = buffer.ToArray();
+                OnSceenClear(null, null);
                 CurrData.ClearBytes();
                 CurrData.AddBytes(bytes);
-                OnSceenClear(null, null);
                 Log($"Read {CurrData.RawBytes.Length}  bytes to file {file.DisplayName}");
 
 
@@ -209,6 +215,9 @@ namespace Compumate
 
                 var appointments = new CompumateAppointments(CurrData);
                 uiOutput.Text += appointments.ToString();
+
+                var wordProcFiles = new CompumateWordProcessor(CurrData);
+                uiOutput.Text += wordProcFiles.ToString();
             }
         }
     }

@@ -28,8 +28,6 @@ namespace Compumate
  And is is a proper blue?  x00 
  Is the maid involved x00 
 
-
-
         The 0x03 is the number of entries (3). Each entry is line followed by x00
         After the header the values are:
         +0 x02 unknown
@@ -47,7 +45,7 @@ namespace Compumate
          */
         public CompumateAppointments(DataChunk dataChunk)
         {
-            Parse(dataChunk, Header);
+            Parse<CompumateAppointmentDataEntry>(dataChunk, Header);
         }
         public override string ToString()
         {
@@ -56,7 +54,30 @@ namespace Compumate
             {
                 retval += entry.ToString();
             }
+            if (Entries.Count > 0) retval += "\n";
             return retval;
+        }
+    }
+
+    class CompumateAppointmentDataEntry : CompumateAbstractDataEntry
+    {
+        public string RawDateTime { get { return Data[0]; } }
+        public string Name { get { return Data[1]; } }
+        public string Memo1 { get { return Data[2]; } }
+        public string Memo2 { get { return Data[3]; } }
+        public string Memo3 { get { return Data[4]; } }
+
+        public override void Fixup()
+        {
+            for (int i = Data.Count; i < 5; i++)
+            {
+                Add(""); // Add blank lines until there are five values in all cases. This can't actually happen.
+            }
+        }
+
+        public override string ToString()
+        {
+            return $"{Name} at {RawDateTime}\n    {Memo1}\n    {Memo2}\n    {Memo3}\n";
         }
     }
 }

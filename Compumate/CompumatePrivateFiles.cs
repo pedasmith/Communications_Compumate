@@ -51,7 +51,7 @@ namespace Compumate
 
         public CompumatePrivateFiles(DataChunk dataChunk)
         {
-            Parse(dataChunk, Header);
+            Parse<CompumateDataEntry>(dataChunk, Header);
         }
         public override string ToString()
         {
@@ -60,6 +60,7 @@ namespace Compumate
             {
                 retval += entry.ToString();
             }
+            if (Entries.Count > 0) retval += "\n";
             return retval;
         }
     }

@@ -22,12 +22,14 @@ namespace Compumate
  Captain's Cabin x00 
  Pequod, Nantucket Island,  MA x00 
  Really wants that whale x00 
- Doe,  John x00 609 555-0123 x00 
+ Doe,  John x00 
+ 609 555-0123 x00 
  100 Main Street x00 
  Anytown, NJ,  08540 x00 
  Fictious legal person x00 
  Holmes, Sherlock x00 
- 609 555-0101 x00 221b Baker Street' x00 
+ 609 555-0101 x00 
+ 221b Baker Street' x00 
  London UK x00 
  Fictional Detective x00 
  x13  x00 
@@ -48,7 +50,7 @@ namespace Compumate
          */
         public CompumateTelephoneDirectory(DataChunk dataChunk)
         {
-            Parse(dataChunk, Header);
+            Parse<CompumateTelephoneDataEntry>(dataChunk, Header);
         }
         public override string ToString()
         {
@@ -57,7 +59,30 @@ namespace Compumate
             {
                 retval += entry.ToString();
             }
+            if (Entries.Count > 0) retval += "\n";
             return retval;
+        }
+    }
+
+    class CompumateTelephoneDataEntry : CompumateAbstractDataEntry
+    {
+        public string Name {  get { return Data[0]; } }
+        public string Telephone {  get { return Data[1]; } }
+        public string AddressStreet {  get { return Data[2]; } }
+        public string AddressCityStateZip {  get { return Data[3]; } }
+        public string Memo {  get { return Data[4]; } }
+
+        public override void Fixup()
+        {
+            for (int i=Data.Count; i<5; i++)
+            {
+                Add(""); // Add blank lines until there are five values in all cases. This can't actually happen.
+            }
+        }
+
+        public override string ToString()
+        {
+            return $"{Name} phone:{Telephone}\n    {AddressStreet} / {AddressCityStateZip}\n    {Memo}\n";
         }
     }
 }

@@ -9,23 +9,23 @@ namespace Compumate
 {
     class CompumateSection
     {
-        public List<CompumateDataEntry> Entries { get; } = new List<CompumateDataEntry>();
+        public List<CompumateAbstractDataEntry> Entries { get; } = new List<CompumateAbstractDataEntry>();
 
-        public int Parse(DataChunk dataChunk, byte[] header)
+        public int Parse<SpecificDataEntry>(DataChunk dataChunk, byte[] header, int nentryLocation=1, int linesPerEntry=5) where SpecificDataEntry: CompumateAbstractDataEntry, new()
         {
             var data = dataChunk.RawBytes;
             int retval = -1;
             var index = dataChunk.Find(header);
             if (index < 0) return -1;
             index += header.Length;
-            var nentries = (int)(data[index + 1]);
+            var nentries = (int)(data[index + nentryLocation]);
             index += 7;
 
             var startIndex = index;
             for (int i = 0; i < nentries; i++)
             {
-                var entry = new CompumateDataEntry();
-                for (int line = 0; line < 5; line++)
+                var entry = new SpecificDataEntry();
+                for (int line = 0; line < linesPerEntry; line++)
                 {
                     var endIndex = FindNext(data, startIndex, 0x00);
                     var item = Subbytes(data, startIndex, endIndex); // don't include the null
@@ -33,6 +33,7 @@ namespace Compumate
                     entry.Add(str);
                     startIndex = endIndex + 1;
                 }
+                entry.Fixup();
                 Entries.Add(entry);
             }
             return retval;
