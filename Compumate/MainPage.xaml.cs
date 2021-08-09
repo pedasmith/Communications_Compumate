@@ -195,17 +195,20 @@ namespace Compumate
                 CurrData.ClearBytes();
                 CurrData.AddBytes(bytes);
                 OnSceenClear(null, null);
-                bool lastWasCtrl = false;
                 Log($"Read {CurrData.RawBytes.Length}  bytes to file {file.DisplayName}");
 
 
-                AddBufferToScreen(bytes, ref lastWasCtrl);
+                //bool lastWasCtrl = false;
+                //AddBufferToScreen(bytes, ref lastWasCtrl);
 
-                // Now parse!
-                var pf = new CompumatePrivateFile();
-                pf.Parse(CurrData);
-                uiOutput.Text += "PRIVATE FILE:\n";
-                uiOutput.Text += pf.ToString();
+                var privateFiles = new CompumatePrivateFiles(CurrData);
+                uiOutput.Text += privateFiles.ToString();
+
+                var telephoneList = new CompumateTelephoneDirectory(CurrData);
+                uiOutput.Text += telephoneList.ToString();
+
+                var appointments = new CompumateAppointments(CurrData);
+                uiOutput.Text += appointments.ToString();
             }
         }
     }
