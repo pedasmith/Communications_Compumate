@@ -42,13 +42,21 @@ namespace Compumate
         {
             uiLog.Text += str + "\n";
         }
-
-        private async void MainPage_Loaded(object sender, RoutedEventArgs e)
+        private void QuickStatus(string str)
         {
-            // Fill out the uiSerialPort ComboBox
+            uiQuickStatus.Text = str;
+        }
+        private void Error(string str)
+        {
+            uiQuickStatus.Text = str;
+            Log(str);
+        }
+
+        private async Task FillSerialComboBox()
+        {
+
             uiSerialPort.Items.Clear();
             var selector = SerialDevice.GetDeviceSelector();
-            Log($"Selector is {selector}");
 
             // Need to filter out the machine name from the list. Why? Because this is a silly API.
             var ecdi = new EasClientDeviceInformation();
@@ -71,12 +79,12 @@ namespace Compumate
                             Content = item.Name,
                             Tag = sd,
                         };
-                        Log($"   Adding port {item.Name} id={item.Id}");
+                        //Log($"   Adding port {item.Name} id={item.Id}");
                         uiSerialPort.Items.Add(cbi);
                     }
                     catch (Exception)
                     {
-                        Log($"    NOT Serial: name={item.Name} id={item.Id}");
+                        //Log($"    NOT Serial: name={item.Name} id={item.Id}");
                     }
                 }
                 else
@@ -84,24 +92,64 @@ namespace Compumate
                     //Log($"    NOT Potential: name={item.Name} id={item.Id}");
                 }
             }
-
-            //uiSerialPort.SelectionChanged -= OnSelectSerialPort;
+            switch (uiSerialPort.Items.Count)
+            {
+                case 0: QuickStatus("No serial ports found"); break;
+                case 1: QuickStatus("One serial port found; automatically open"); break;
+                default: QuickStatus("Select serial port to open it and read"); break;
+            }
             if (uiSerialPort.Items.Count >= 1)
             {
                 uiSerialPort.SelectedIndex = 0;
+            }
+        }
+        private async void MainPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            await FillSerialComboBox();
+            if (uiSerialPort.Items.Count == 1)
+            {
                 OnSelectSerialPort(null, null); // Only one? Auto open!
             }
-            //uiSerialPort.SelectionChanged += OnSelectSerialPort;
+
+            // Fill in the help system.
+
+            // Set up common markdown values
+            uiHelpMarkdown.ImageStretch = Stretch.Uniform;
+            uiHelpMarkdown.ImageMaxWidth = 400;
+            uiHelpMarkdown.UriPrefix = "ms-appx:///Assets/HelpFiles/";
+            uiHelpMarkdown.ImageResolving += UiHelpMarkdown_ImageResolving;
+
+            //await ReadHelpAsync ("CompumateHelp.md");
+        }
+
+        private async Task ReadHelpAsync(string filename)
+        {
+            StorageFolder installationFolder = Windows.ApplicationModel.Package.Current.InstalledLocation;
+            var helpFolder = await installationFolder.GetFolderAsync(@"Assets\HelpFiles");
+            var md = await helpFolder.GetFileAsync(filename);
+
+            var text = await FileIO.ReadTextAsync(md);
+            uiHelpMarkdown.Text = text;
+
+            uiHelpArea.Visibility = Visibility.Visible;
+        }
+
+        private void UiHelpMarkdown_ImageResolving(object sender, Microsoft.Toolkit.Uwp.UI.Controls.ImageResolvingEventArgs e)
+        {
+            ;
         }
 
         CancellationTokenSource Cts = new CancellationTokenSource();
-        CancellationToken CT;
         Task ReadTask = null;
         private void OnSelectSerialPort(object sender, RoutedEventArgs e)
         {
             var cbi = uiSerialPort.SelectedValue as ComboBoxItem;
             var sd = cbi?.Tag as SerialDevice;
-            if (sd == null) return;
+            if (sd == null)
+            {
+                Error("Unable to open serial port");
+                return;
+            }
             ReadTask = ContinuouslyReadSerial(sd, Cts.Token);
         }
 
@@ -110,6 +158,7 @@ namespace Compumate
         {
             Log($"OPENING PORT!");
             sd.BaudRate = 9600;
+            sd.DataBits = 8;
             sd.Handshake = SerialHandshake.None;
             sd.Parity = SerialParity.Even;
             sd.StopBits = SerialStopBitCount.One;
@@ -120,6 +169,7 @@ namespace Compumate
             var dr = new DataReader(sd.InputStream);
             dr.InputStreamOptions = InputStreamOptions.Partial;
             bool lastWasCtrl = false;
+
             while (true)
             {
                 var n = await dr.LoadAsync(500);
@@ -130,6 +180,12 @@ namespace Compumate
                 dr.ReadBytes(buffer);
                 CurrData.AddBytes(buffer);
                 AddBufferToScreen(buffer, ref lastWasCtrl);
+
+                if (n != 500)
+                {
+                    // must be at the end?
+                    ParseCurrData();
+                }
             }
         }
 
@@ -155,7 +211,7 @@ namespace Compumate
                     lastWasCtrl = false;
                 }
             }
-            uiOutput.Text += sb.ToString();
+            uiLog.Text += sb.ToString();
         }
 
         private void OnSceenClear(object sender, RoutedEventArgs e)
@@ -169,6 +225,12 @@ namespace Compumate
 
         private async void OnDataSave(object sender, RoutedEventArgs e)
         {
+            if (CurrData.RawBytes == null || CurrData.RawBytes.Length == 0)
+            {
+                Error("Can't save until data's been read");
+                return;
+            }
+
             var savePicker = new FileSavePicker()
             {
                 SettingsIdentifier = FileLocation_Compumate_Data,
@@ -179,8 +241,15 @@ namespace Compumate
             var file = await savePicker.PickSaveFileAsync();
             if (file != null)
             {
-                await FileIO.WriteBytesAsync(file, CurrData.RawBytes);
-                Log($"Write {CurrData.RawBytes.Length}  bytes to file {file.DisplayName}");
+                try
+                {
+                    await FileIO.WriteBytesAsync(file, CurrData.RawBytes);
+                    QuickStatus($"Wrote {CurrData.RawBytes.Length} bytes");
+                }
+                catch (Exception ex)
+                {
+                    Error($"Unable to write to {file.DisplayName}. {ex.Message}");
+                }
             }
         }
 
@@ -196,29 +265,49 @@ namespace Compumate
             var file = await openPicker.PickSingleFileAsync();
             if (file != null)
             {
-                var buffer = await FileIO.ReadBufferAsync(file);
-                var bytes = buffer.ToArray();
-                OnSceenClear(null, null);
-                CurrData.ClearBytes();
-                CurrData.AddBytes(bytes);
-                Log($"Read {CurrData.RawBytes.Length}  bytes to file {file.DisplayName}");
+                try
+                {
+                    var buffer = await FileIO.ReadBufferAsync(file);
+                    var bytes = buffer.ToArray();
+                    OnSceenClear(null, null);
+                    CurrData.ClearBytes();
+                    CurrData.AddBytes(bytes);
+                    Log($"Read {CurrData.RawBytes.Length}  bytes from file {file.DisplayName}");
 
-
-                //bool lastWasCtrl = false;
-                //AddBufferToScreen(bytes, ref lastWasCtrl);
-
-                var privateFiles = new CompumatePrivateFiles(CurrData);
-                uiOutput.Text += privateFiles.ToString();
-
-                var telephoneList = new CompumateTelephoneDirectory(CurrData);
-                uiOutput.Text += telephoneList.ToString();
-
-                var appointments = new CompumateAppointments(CurrData);
-                uiOutput.Text += appointments.ToString();
-
-                var wordProcFiles = new CompumateWordProcessor(CurrData);
-                uiOutput.Text += wordProcFiles.ToString();
+                    ParseCurrData();
+                    QuickStatus($"Read {CurrData.RawBytes.Length} bytes");
+                }
+                catch (Exception ex)
+                {
+                    Error($"Unable to read {file.DisplayName}. {ex.Message}");
+                }
             }
+        }
+
+        private void ParseCurrData()
+        {
+            var privateFiles = new CompumatePrivateFiles(CurrData);
+            uiOutput.Text += privateFiles.ToString();
+
+            var telephoneList = new CompumateTelephoneDirectory(CurrData);
+            uiOutput.Text += telephoneList.ToString();
+
+            var appointments = new CompumateAppointments(CurrData);
+            uiOutput.Text += appointments.ToString();
+
+            var wordProcFiles = new CompumateWordProcessor(CurrData);
+            uiOutput.Text += wordProcFiles.ToString();
+        }
+
+        private async void OnHelp(object sender, RoutedEventArgs e)
+        {
+            var file = (sender as FrameworkElement).Tag as string;
+            await ReadHelpAsync(file);
+        }
+
+        private void OnGridTapped(object sender, TappedRoutedEventArgs e)
+        {
+            uiHelpArea.Visibility = Visibility.Collapsed;
         }
     }
 }

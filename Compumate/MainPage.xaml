@@ -3,36 +3,75 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Compumate"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
+    <Grid >
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
+        <CommandBar>
+            <CommandBar.Content>
+                <TextBlock x:Name="uiQuickStatus" />
+            </CommandBar.Content>
+            <AppBarButton Icon="ClearSelection" Content="Clear" ToolTipService.ToolTip="Clear the screen" Click="OnSceenClear" />
+            <AppBarButton Icon="Save" Content="File">
+                <AppBarButton.Flyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Icon="Save" ToolTipService.ToolTip="Save file" Text="Save" Click="OnDataSave" />
+                        <MenuFlyoutItem Icon="Read" ToolTipService.ToolTip="Read file" Text="Read" Click="OnDataRead" />
+                    </MenuFlyout>
+                </AppBarButton.Flyout>
+            </AppBarButton>
+            <AppBarButton Content="Help" Icon="Help">
+                <AppBarButton.Flyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Text="Compumate" Click="OnHelp" Tag="CompumateAbout.md" />
+                        <MenuFlyoutItem Text="Compumate Help" Click="OnHelp" Tag="CompumateHelp.md" />
+                        <MenuFlyoutItem Text="Compumate Menus" Click="OnHelp" Tag="CompumateMenus.md" />
+                        <MenuFlyoutItem Text="Setting up RS232" Click="OnHelp" Tag="RS232.md" />
+                        <MenuFlyoutItem Text="Using this program" Click="OnHelp" Tag="CommunicationsForCompumate.md" />
+                    </MenuFlyout>
+                </AppBarButton.Flyout>
+            </AppBarButton>
+        </CommandBar>
 
-        <TextBlock Grid.Row="0" FontSize="24">Communications Program for Compumate (Laser pc3 vtech)</TextBlock>
+        <TextBlock Grid.Row="1" FontSize="24" Tapped="OnGridTapped">Communications Program for Compumate (Laser pc3 vtech)</TextBlock>
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal">
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Tapped="OnGridTapped">
             <ComboBox x:Name="uiSerialPort" MinWidth="220"/>
             <Button Content="Open" Click="OnSelectSerialPort" />
+            <!--
             <Button Content="Clear" Click="OnSceenClear" />
             <Button Content="Save" Click="OnDataSave" />
             <Button Content="Read" Click="OnDataRead" />
+            -->
         </StackPanel>
 
-        <ScrollViewer Grid.Row="2" VerticalAlignment="Stretch">
+        <ScrollViewer Grid.Row="3" VerticalAlignment="Stretch" Tapped="OnGridTapped">
             <TextBlock x:Name="uiOutput" TextWrapping="Wrap" IsTextSelectionEnabled="True"/>
         </ScrollViewer>
-        
-        <ScrollViewer Grid.Row="3" Height="250">
+
+        <ScrollViewer Grid.Row="4" Height="250" Tapped="OnGridTapped">
             <TextBlock x:Name="uiLog" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
         </ScrollViewer>
+
+        <Grid x:Name="uiHelpArea" Grid.Row="2" Grid.RowSpan="3" MinWidth="400" MaxWidth="400" HorizontalAlignment="Right" VerticalAlignment="Stretch" Visibility="Collapsed">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <TextBlock FontSize="20">HELP</TextBlock>
+            <ScrollViewer Grid.Row="1">
+                <controls:MarkdownTextBlock Grid.Row="1" x:Name="uiHelpMarkdown" />
+            </ScrollViewer>
+        </Grid>
     </Grid>
-    
 </Page>
