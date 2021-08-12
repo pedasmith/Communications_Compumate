@@ -16,7 +16,7 @@
   <Properties>
     <DisplayName>Compumate</DisplayName>
     <PublisherDisplayName>toomr</PublisherDisplayName>
-    <Logo>Assets\StoreLogo.png</Logo>
+    <Logo>Assets\Icons\StoreLogo.png</Logo>
   </Properties>
 
   <Dependencies>
@@ -35,13 +35,13 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="Compumate.App">
       <uap:VisualElements
-        DisplayName="Compumate"
-        Square150x150Logo="Assets\Square150x150Logo.png"
-        Square44x44Logo="Assets\Square44x44Logo.png"
-        Description="Compumate"
+        DisplayName="Communications Program for Compumate"
+        Square150x150Logo="Assets\Icons\Square150x150Logo.png"
+        Square44x44Logo="Assets\Icons\Square44x44Logo.png"
+        Description="Download user data from your LASER pc3 (Compumate) computer."
         BackgroundColor="transparent">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"/>
-        <uap:SplashScreen Image="Assets\SplashScreen.png" />
+        <uap:DefaultTile Wide310x150Logo="Assets\Icons\Wide310x150Logo.png" Square71x71Logo="Assets\Icons\SmallTile.png" Square310x310Logo="Assets\Icons\LargeTile.png"/>
+        <uap:SplashScreen Image="Assets\Icons\SplashScreen.png" />
       </uap:VisualElements>
     </Application>
   </Applications>
