@@ -43,6 +43,19 @@
         <uap:DefaultTile Wide310x150Logo="Assets\Icons\Wide310x150Logo.png" Square71x71Logo="Assets\Icons\SmallTile.png" Square310x310Logo="Assets\Icons\LargeTile.png"/>
         <uap:SplashScreen Image="Assets\Icons\SplashScreen.png" />
       </uap:VisualElements>
+      <Extensions>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="compumate">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="text/readablebinary">.compumate</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Compumate Readable-binary file</uap:DisplayName>
+            <uap:Logo>Assets\Icons\File-Extension-Compumate.png</uap:Logo>
+            <uap:InfoTip>Compumate pc3 dump file</uap:InfoTip>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+      </Extensions>
     </Application>
   </Applications>
 </Package>

@@ -32,15 +32,9 @@ namespace Compumate
             this.Suspending += OnSuspending;
         }
 
-        /// <summary>
-        /// Invoked when the application is launched normally by the end user.  Other entry points
-        /// will be used such as when the application is launched to open a specific file.
-        /// </summary>
-        /// <param name="e">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        private Frame CreateRootFrame()
         {
             Frame rootFrame = Window.Current.Content as Frame;
-
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
             if (rootFrame == null)
@@ -48,16 +42,46 @@ namespace Compumate
                 // Create a Frame to act as the navigation context and navigate to the first page
                 rootFrame = new Frame();
 
+                // Create a Frame to act as the navigation context and navigate to the first page
                 rootFrame.NavigationFailed += OnNavigationFailed;
-
-                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
-                {
-                    //TODO: Load state from previously suspended application
-                }
-
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
             }
+
+            return rootFrame;
+        }
+
+        protected override async void OnFileActivated(FileActivatedEventArgs args)
+        {
+            var mainPageType = typeof(MainPage);
+
+            Frame rootFrame = CreateRootFrame();
+            if (rootFrame.Content == null)
+            {
+                if (!rootFrame.Navigate(mainPageType))
+                {
+                    throw new Exception("Failed to create initial page");
+                }
+            }
+
+            var p = rootFrame.Content as MainPage;
+            if (p != null)
+            {
+                await p.DoFilesActivated(args);
+            }
+            // Ensure the current window is active
+            Window.Current.Activate();
+        }
+
+
+        /// <summary>
+        /// Invoked when the application is launched normally by the end user.  Other entry points
+        /// will be used such as when the application is launched to open a specific file.
+        /// </summary>
+        /// <param name="e">Details about the launch request and process.</param>
+        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        {
+            Frame rootFrame = CreateRootFrame();
 
             if (e.PrelaunchActivated == false)
             {

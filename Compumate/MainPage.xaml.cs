@@ -7,6 +7,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Activation;
 using Windows.Devices.Enumeration;
 using Windows.Devices.SerialCommunication;
 using Windows.Foundation;
@@ -50,6 +51,15 @@ namespace Compumate
         {
             uiQuickStatus.Text = str;
             Log(str);
+        }
+        public async Task DoFilesActivated(FileActivatedEventArgs args)
+        {
+            if (args.Files.Count == 1)
+            {
+                // Open the one file.
+                var file = args.Files[0] as StorageFile;
+                await DoFileRead(file);
+            }
         }
 
         private async Task FillSerialComboBox()
@@ -249,22 +259,27 @@ namespace Compumate
             var file = await openPicker.PickSingleFileAsync();
             if (file != null)
             {
-                try
-                {
-                    var str = await FileIO.ReadTextAsync(file);
-                    var bytes = ReadableBinary.ToBinary(str);
-                    OnSceenClear(null, null);
-                    CurrData.ClearBytes();
-                    CurrData.AddBytes(bytes);
-                    Log($"Read {CurrData.RawBytes.Length}  bytes from file {file.DisplayName}");
+                await DoFileRead(file);
+            }
+        }
 
-                    ParseCurrData();
-                    QuickStatus($"Read {CurrData.RawBytes.Length} bytes");
-                }
-                catch (Exception ex)
-                {
-                    Error($"Unable to read {file.DisplayName}. {ex.Message}");
-                }
+        private async Task DoFileRead(StorageFile file)
+        {
+            try
+            {
+                var str = await FileIO.ReadTextAsync(file);
+                var bytes = ReadableBinary.ToBinary(str);
+                OnSceenClear(null, null);
+                CurrData.ClearBytes();
+                CurrData.AddBytes(bytes);
+                Log($"Read {CurrData.RawBytes.Length}  bytes from file {file.DisplayName}");
+
+                ParseCurrData();
+                QuickStatus($"Read {CurrData.RawBytes.Length} bytes");
+            }
+            catch (Exception ex)
+            {
+                Error($"Unable to read {file.DisplayName}. {ex.Message}");
             }
         }
 
