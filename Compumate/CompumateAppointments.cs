@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Composition.Interactions;
 
 namespace Compumate
 {
@@ -62,10 +63,23 @@ namespace Compumate
     class CompumateAppointmentDataEntry : CompumateAbstractDataEntry
     {
         public string RawDateTime { get { return Data[0]; } }
+        public DateTime At { get { return ParseDateTime(RawDateTime); } }
         public string Name { get { return Data[1]; } }
         public string Memo1 { get { return Data[2]; } }
         public string Memo2 { get { return Data[3]; } }
         public string Memo3 { get { return Data[4]; } }
+
+        public static DateTime ParseDateTime(string raw) // e.g. 2104061200000 ==> 2021 04 06 12:00
+        {
+            var year = Int32.Parse(raw.Substring(0, 2));
+            year = year + ((year > 80) ? 1900 : 2000);
+            var month = Int32.Parse(raw.Substring(2, 2));
+            var day = Int32.Parse(raw.Substring(4, 2));
+            var hour = Int32.Parse(raw.Substring(6, 2));
+            var minute = Int32.Parse(raw.Substring(8, 2));
+            var dt = new DateTime(year, month, day, hour, minute, 0);
+            return dt;
+        }
 
         public override void Fixup()
         {
@@ -77,7 +91,8 @@ namespace Compumate
 
         public override string ToString()
         {
-            return $"{Name} at {RawDateTime}\n    {Memo1}\n    {Memo2}\n    {Memo3}\n";
+            var at = At.ToString();
+            return $"{Name} at {At}\n    {Memo1}\n    {Memo2}\n    {Memo3}\n";
         }
     }
 }
