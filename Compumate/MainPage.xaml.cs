@@ -119,7 +119,9 @@ namespace Compumate
             uiHelpMarkdown.UriPrefix = "ms-appx:///Assets/HelpFiles/";
             uiHelpMarkdown.ImageResolving += UiHelpMarkdown_ImageResolving;
 
-            //await ReadHelpAsync ("CompumateHelp.md");
+            // All the built-in tests
+            int nerror = 0;
+            nerror += ReadableBinary.Test();
         }
 
         private async Task ReadHelpAsync(string filename)
@@ -191,27 +193,8 @@ namespace Compumate
 
         private void AddBufferToScreen(byte[] buffer, ref bool lastWasCtrl)
         {
-            var sb = new StringBuilder();
-            foreach (var b in buffer)
-            {
-                if (b < 0x20 || b >= 0x7f)
-                {
-                    if (!lastWasCtrl) sb.Append(' ');
-                    sb.Append($"\\{b:X2} ");
-                    lastWasCtrl = true;
-                }
-                else if (b == (byte)'\\')
-                {
-                    sb.Append("\\\\");
-                    lastWasCtrl = false;
-                }
-                else
-                {
-                    sb.Append((char)b);
-                    lastWasCtrl = false;
-                }
-            }
-            uiLog.Text += sb.ToString();
+            var str = ReadableBinary.ToString(buffer);
+            uiLog.Text += str;
         }
 
         private void OnSceenClear(object sender, RoutedEventArgs e)
@@ -243,7 +226,8 @@ namespace Compumate
             {
                 try
                 {
-                    await FileIO.WriteBytesAsync(file, CurrData.RawBytes);
+                    var str = ReadableBinary.ToString(CurrData.RawBytes);
+                    await FileIO.WriteTextAsync (file, str);
                     QuickStatus($"Wrote {CurrData.RawBytes.Length} bytes");
                 }
                 catch (Exception ex)
@@ -267,8 +251,8 @@ namespace Compumate
             {
                 try
                 {
-                    var buffer = await FileIO.ReadBufferAsync(file);
-                    var bytes = buffer.ToArray();
+                    var str = await FileIO.ReadTextAsync(file);
+                    var bytes = ReadableBinary.ToBinary(str);
                     OnSceenClear(null, null);
                     CurrData.ClearBytes();
                     CurrData.AddBytes(bytes);

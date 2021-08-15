@@ -1,0 +1,39 @@
+\09\80p\F8h\FAh\FA}\FCWORD PROCESSOR\00 \00\00\00\00\02\02\D8\FF
+Keyboard\00The keyboard on  the pc3 is about the worst keyboard 
+I have ever used. There are three big problems. \0D
+First, if you type too fast, you get duplicate key presses. Seco
+nd, the keys must be pressed straight down; small lateral forces
+ will feel  like they stick. And third, the ENTER key is in the 
+wrong place.\0D
+\0D
+Four: the system loves to pop into CAPS LOCK moode.\0D
+\0D
+Maybe number 5: there are two  pllus signs. One is for calculato
+r mode,  and the other isn't. That's 100% wierd.\00\FFSoftware I
+ncluded\00W\7Fhile I can appreciate the included software,  all 
+of it feels unpolished and only partly complete. There is an ove
+raching scheme, but it's not powerful enough, so every module th
+at needs "something else" has to resort to weird tricks.\0D
+\0D
+To finish a "personal file" you fill in the 5 lines of date.  Fo
+r a word processor, you press esc. That's just odd.\0D
+\0D
+The calculator is very under-powered. Why can't they have added 
+sin/cos etc. like all  other calc programs. Especially since thi
+s is the updated version (there was an earlier pc2)\00\18\04\06\80
+}\FC\B2\FD\B2\FD\BB\FDPRIVATE FILE\00\00\00\00\01\03\00\00\00\00
+(Binary save\00The :binary: file should be something\00that has 
+text where possible and hex\00otherwise. And the lines should no
+t be\00too  long.\00Dates\00Be sure to parse the dates correctly
+\00\00\00\00Expense Account\00V1 won't include a dump of \00the 
+expense account data.  The\00format is just too  hard to \00figu
+re out right now.\00=\00\00\00\00\00\00\00\00\00\00\04\04\80\BB\FD
+\0C\FE\0C\FE\15\FEAPPOINTMENTS\00\00\00\00\02\01\00\00\00\006210
+4061200000\00Grimsby Rylott\00The speckled band is afoot. Or wha
+tever\00snakes do.\00\00@\00\00\00\00\00\00\00\00\00\00\04\03\80
+\15\FE\F6\FE\F6\FE\FF\FETELEPHONE DIR.\00\00\00\03\00\00\00\00\7F
+Holmes,Mycroft\00555-1212\00Diogenes Club, Pall Mall\00London, U
+K\00\00Holmes,Sherlock\00555-1212\00221b Baker Street\00London U
+K\00Fictional detective\00Watson,John\00555-1212\00221b Baker St
+reet\00London, UK\00Fictional  doctor and friend to Sherlock\00F
+\00\00\00\00\00\00\00\00\00\00\00

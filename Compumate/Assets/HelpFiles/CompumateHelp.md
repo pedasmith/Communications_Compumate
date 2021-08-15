@@ -73,6 +73,7 @@ Selecting either of the above displays a four item menu
 To add a new entry, press 1 and the name or title of the entry. You must press ENTER at the end of each of five lines for the information to be saved.
 
 The standard print format require you to enter data lines for the telephone directory in this order
+
 1. Last, First name
 2. Phone number
 3. Street Address
@@ -91,6 +92,7 @@ To re-dial the last phone number press Ctrl-R at any time.
 
 # 5 – Appointment Book
 The appointment book has 5 options:
+
 1. ADD
 2. SEARCH
 3. NEXT
@@ -105,7 +107,7 @@ To search for a specific entry, press 2. Type a name or work for which you wish 
 Whenever you are viewing an appointment, you can edit it by holding the Control (CTRL) key and pressing E, or you can delete it by pressing Delete (DEL).
 
 Pressing 3 automatically shows you your next appointment.
-The alarm may be set for the appt. being displayed. PRess Ctrl-A then press Y to set the alarm or N to clear it. The appt. date remains the same but you may set the alarm for an earlier time with the ARROW and ETNER keys.
+The alarm may be set for the appt. being displayed. PRess Ctrl-A then press Y to set the alarm or N to clear it. The appt. date remains the same but you may set the alarm for an earlier time with the ARROW and ENTER keys.
 	
 To delete your old appointments, press 5.
 
