@@ -53,10 +53,8 @@ WORD PROCESSOR \00 \20 \00 \00 \00 \00 \02 \03 v
         public override void Fixup()
         {
             // A 0x7F is put at the start of the file name; it must be stripped off.
-            if(Data[0][0] == 0x7F)
-            {
-                Data[0] = Data[0].Substring(1);
-            }
+            // The 0x7F has already been converted to a ? char by the bytes-->string conversion.
+            Data[0] = Data[0].Substring(1);
         }
         public override string ToString()
         {
