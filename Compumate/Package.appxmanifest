@@ -7,15 +7,15 @@
   IgnorableNamespaces="uap mp">
 
   <Identity
-    Name="38084f56-e92a-4faa-acb1-5a684cf85132"
-    Publisher="CN=toomr"
-    Version="1.0.0.0" />
+    Name="48425ShipwreckSoftware.CommunicationsProgramforCom"
+    Publisher="CN=9A3276B6-661B-463D-9598-EFFF0974120A"
+    Version="1.0.2.0" />
 
-  <mp:PhoneIdentity PhoneProductId="38084f56-e92a-4faa-acb1-5a684cf85132" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="f662198e-c98a-41f6-91c6-42eeae4ad603" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>Compumate</DisplayName>
-    <PublisherDisplayName>toomr</PublisherDisplayName>
+    <DisplayName>Communications Program for Compumate (pc3)</DisplayName>
+    <PublisherDisplayName>Shipwreck Software</PublisherDisplayName>
     <Logo>Assets\Icons\StoreLogo.png</Logo>
   </Properties>
 
@@ -40,7 +40,7 @@
         Square44x44Logo="Assets\Icons\Square44x44Logo.png"
         Description="Download user data from your LASER pc3 (Compumate) computer."
         BackgroundColor="transparent">
-        <uap:DefaultTile Wide310x150Logo="Assets\Icons\Wide310x150Logo.png" Square71x71Logo="Assets\Icons\SmallTile.png" Square310x310Logo="Assets\Icons\LargeTile.png"/>
+        <uap:DefaultTile Wide310x150Logo="Assets\Icons\Wide310x150Logo.png" Square310x310Logo="Assets\Icons\LargeTile.png" Square71x71Logo="Assets\Icons\SmallTile.png"/>
         <uap:SplashScreen Image="Assets\Icons\SplashScreen.png" />
       </uap:VisualElements>
       <Extensions>
