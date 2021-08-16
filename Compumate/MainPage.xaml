@@ -25,7 +25,7 @@
             <AppBarButton Icon="Save" Content="File">
                 <AppBarButton.Flyout>
                     <MenuFlyout>
-                        <MenuFlyoutItem Icon="Save" ToolTipService.ToolTip="Save file" Text="Save" Click="OnDataSave" />
+                        <MenuFlyoutItem x:Name="uiMenuSave" IsEnabled="False" Icon="Save" ToolTipService.ToolTip="Save file" Text="Save" Click="OnDataSave" />
                         <MenuFlyoutItem Icon="Read" ToolTipService.ToolTip="Read file" Text="Read" Click="OnDataRead" />
                     </MenuFlyout>
                 </AppBarButton.Flyout>
@@ -36,8 +36,10 @@
                         <MenuFlyoutItem Text="Compumate" Click="OnHelp" Tag="CompumateAbout.md" />
                         <MenuFlyoutItem Text="Compumate Help" Click="OnHelp" Tag="CompumateHelp.md" />
                         <MenuFlyoutItem Text="Compumate Menus" Click="OnHelp" Tag="CompumateMenus.md" />
+                        <MenuFlyoutItem Text="Control keys" Click="OnHelp" Tag="CompumateControlKeys.md" />
                         <MenuFlyoutItem Text="Setting up RS232" Click="OnHelp" Tag="RS232.md" />
                         <MenuFlyoutItem Text="Using this program" Click="OnHelp" Tag="CommunicationsForCompumate.md" />
+                        <MenuFlyoutItem Text="Sample .compumate file" Click="OnHelp" Tag="Compumate.compumate@CompumateSampleFileTemplate.md" />
                     </MenuFlyout>
                 </AppBarButton.Flyout>
             </AppBarButton>
@@ -47,19 +49,15 @@
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" Tapped="OnGridTapped">
             <ComboBox x:Name="uiSerialPort" MinWidth="220"/>
-            <Button Content="Open" Click="OnSelectSerialPort" />
-            <!--
-            <Button Content="Clear" Click="OnSceenClear" />
-            <Button Content="Save" Click="OnDataSave" />
-            <Button Content="Read" Click="OnDataRead" />
-            -->
+            <Button Content="🖀 Open" Click="OnSelectSerialPort" />
+            <Button Content="⟳ Refresh" Click="OnRefreshSerialPort" />
         </StackPanel>
 
         <ScrollViewer Grid.Row="3" VerticalAlignment="Stretch" Tapped="OnGridTapped">
             <TextBlock x:Name="uiOutput" TextWrapping="Wrap" IsTextSelectionEnabled="True"/>
         </ScrollViewer>
 
-        <ScrollViewer Grid.Row="4" Height="250" Tapped="OnGridTapped">
+        <ScrollViewer Grid.Row="4" Height="50" Tapped="OnGridTapped">
             <TextBlock x:Name="uiLog" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
         </ScrollViewer>
 

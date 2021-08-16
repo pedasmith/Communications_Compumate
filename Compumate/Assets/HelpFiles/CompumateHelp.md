@@ -107,7 +107,7 @@ To search for a specific entry, press 2. Type a name or work for which you wish 
 Whenever you are viewing an appointment, you can edit it by holding the Control (CTRL) key and pressing E, or you can delete it by pressing Delete (DEL).
 
 Pressing 3 automatically shows you your next appointment.
-The alarm may be set for the appt. being displayed. PRess Ctrl-A then press Y to set the alarm or N to clear it. The appt. date remains the same but you may set the alarm for an earlier time with the ARROW and ENTER keys.
+The alarm may be set for the appt. being displayed. Press Ctrl-A then press Y to set the alarm or N to clear it. The appt. date remains the same but you may set the alarm for an earlier time with the ARROW and ENTER keys.
 	
 To delete your old appointments, press 5.
 

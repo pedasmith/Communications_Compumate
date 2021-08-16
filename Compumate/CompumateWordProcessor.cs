@@ -35,12 +35,17 @@ WORD PROCESSOR \00 \20 \00 \00 \00 \00 \02 \03 v
         }
         public override string ToString()
         {
-            var retval = Entries.Count > 0 ? "WORD PROCESSOR\n" : "";
-            foreach (var entry in Entries)
+            var haveEntries = Entries.Count > 0;
+            string retval = "";
+            if (haveEntries)
             {
-                retval += entry.ToString();
+                retval = "WORD PROCESSOR\n";
+                foreach (var entry in Entries)
+                {
+                    retval += entry.ToString();
+                }
+                retval += "\n";
             }
-            if (Entries.Count > 0) retval += "\n";
             return retval;
         }
     }

@@ -1,29 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.IO.Ports;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
 using Windows.Devices.Enumeration;
 using Windows.Devices.SerialCommunication;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Security.ExchangeActiveSyncProvisioning;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -61,6 +50,10 @@ namespace Compumate
                 await DoFileRead(file);
             }
         }
+        private async void OnRefreshSerialPort(object sender, RoutedEventArgs e)
+        {
+            await FillSerialComboBox();
+        }
 
         private async Task FillSerialComboBox()
         {
@@ -71,7 +64,7 @@ namespace Compumate
             // Need to filter out the machine name from the list. Why? Because this is a silly API.
             var ecdi = new EasClientDeviceInformation();
             var machineName = ecdi.FriendlyName;
-            Log($"ecdi.FriendlyName={ecdi.FriendlyName}");
+            //Log($"ecdi.FriendlyName={ecdi.FriendlyName}");
 
             var list = await DeviceInformation.FindAllAsync(selector);
             foreach (var item in list)
@@ -134,13 +127,17 @@ namespace Compumate
             nerror += ReadableBinary.Test();
         }
 
-        private async Task ReadHelpAsync(string filename)
+        private async Task ReadHelpAsync(string filename, string contents)
         {
             StorageFolder installationFolder = Windows.ApplicationModel.Package.Current.InstalledLocation;
             var helpFolder = await installationFolder.GetFolderAsync(@"Assets\HelpFiles");
             var md = await helpFolder.GetFileAsync(filename);
 
             var text = await FileIO.ReadTextAsync(md);
+            if (contents != null)
+            {
+                text = text.Replace("{content}", contents);
+            }
             uiHelpMarkdown.Text = text;
 
             uiHelpArea.Visibility = Visibility.Visible;
@@ -180,7 +177,6 @@ namespace Compumate
 
             var dr = new DataReader(sd.InputStream);
             dr.InputStreamOptions = InputStreamOptions.Partial;
-            bool lastWasCtrl = false;
 
             while (true)
             {
@@ -191,8 +187,9 @@ namespace Compumate
                 var buffer = new byte[left];
                 dr.ReadBytes(buffer);
                 CurrData.AddBytes(buffer);
-                AddBufferToScreen(buffer, ref lastWasCtrl);
-
+                var str = ReadableBinary.ToString(buffer);
+                uiLog.Text = str;
+                uiMenuSave.IsEnabled = true; // As soon as we have data we can move forward.
                 if (n != 500)
                 {
                     // must be at the end?
@@ -201,11 +198,6 @@ namespace Compumate
             }
         }
 
-        private void AddBufferToScreen(byte[] buffer, ref bool lastWasCtrl)
-        {
-            var str = ReadableBinary.ToString(buffer);
-            uiLog.Text += str;
-        }
 
         private void OnSceenClear(object sender, RoutedEventArgs e)
         {
@@ -260,6 +252,7 @@ namespace Compumate
             if (file != null)
             {
                 await DoFileRead(file);
+                uiMenuSave.IsEnabled = true;
             }
         }
 
@@ -283,6 +276,32 @@ namespace Compumate
             }
         }
 
+
+
+        private async void OnHelp(object sender, RoutedEventArgs e)
+        {
+            string sample = null;
+            var flist = ((sender as FrameworkElement).Tag as string).Split(new char[] { '@' });
+            var findex = 0;
+            if (flist.Length > 1)
+            {
+                var filename = flist[0];
+                StorageFolder installationFolder = Windows.ApplicationModel.Package.Current.InstalledLocation;
+                var sampleFolder = await installationFolder.GetFolderAsync(@"Assets\SampleFiles");
+                var sampleFile = await sampleFolder.GetFileAsync(filename);
+                sample = await FileIO.ReadTextAsync(sampleFile);
+                findex++;
+            }
+            var file = flist[findex];
+            await ReadHelpAsync(file, sample);
+        }
+
+        private void OnGridTapped(object sender, TappedRoutedEventArgs e)
+        {
+            uiHelpArea.Visibility = Visibility.Collapsed;
+        }
+
+
         private void ParseCurrData()
         {
             var privateFiles = new CompumatePrivateFiles(CurrData);
@@ -296,17 +315,6 @@ namespace Compumate
 
             var wordProcFiles = new CompumateWordProcessor(CurrData);
             uiOutput.Text += wordProcFiles.ToString();
-        }
-
-        private async void OnHelp(object sender, RoutedEventArgs e)
-        {
-            var file = (sender as FrameworkElement).Tag as string;
-            await ReadHelpAsync(file);
-        }
-
-        private void OnGridTapped(object sender, TappedRoutedEventArgs e)
-        {
-            uiHelpArea.Visibility = Visibility.Collapsed;
         }
     }
 }

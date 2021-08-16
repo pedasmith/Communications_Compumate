@@ -55,12 +55,17 @@ namespace Compumate
         }
         public override string ToString()
         {
-            var retval = Entries.Count > 0 ? "PRIVATE FILES\n" : "";
-            foreach (var entry in Entries)
+            var haveEntries = Entries.Count > 0;
+            string retval = "";
+            if (haveEntries)
             {
-                retval += entry.ToString();
+                retval = "PRIVATE FILES\n";
+                foreach (var entry in Entries)
+                {
+                    retval += entry.ToString();
+                }
+                retval += "\n";
             }
-            if (Entries.Count > 0) retval += "\n";
             return retval;
         }
     }
