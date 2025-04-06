@@ -3,7 +3,7 @@
 The Laser pc3 from vtech (also called the Compumate) was a late-1980s notebook-style computer than ran on four AA batteries. It includes a small set of simple programs (calculator, spell checker, telephone book, and some more).
 
 The original compumate included communications software. If you don't have that program available, this one may help. If can read in the 
-The compumate includes an RS232 port (wrapped in a non-standard 15-pin connector). This app, [available on the Microsoft store](	https://www.microsoft.com/store/apps/9NLKC14PWBRQ), lets you download your personal data from the compumate and can parse most of it.
+The compumate includes an RS232 port (wrapped in a non-standard 15-pin connector). This app, [available on the Microsoft store](	https://www.microsoft.com/store/apps/9NLKC14PWBRQ), lets you download your personal data from the compumate and can parse most of it. I did a quick [write up and review](https://shipwrecksoftware.wordpress.com/2021/08/15/new-app-communications-for-compumate/) over on my shipwreck software blog.
 
 # Notes about the ".compumate" file format
 
